@@ -1,0 +1,330 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Earnings</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#0b1220;color:white;
+ font-family:Arial,sans-serif;
+}
+header{
+ padding:20px;display:flex;justify-content:space-between;
+ align-items:center;background:#0b1220;
+}
+.logo{font-size:22px;font-weight:bold}
+.logo span{color:#20d69b}
+.avatar{background:#192a40;padding:12px;border-radius:50%}
+main{padding:10px 18px 100px;min-height:85vh}
+.welcome{color:#9eafc5;margin-top:15px}
+.balance{
+ background:linear-gradient(135deg,#087c61,#124b4d);
+ padding:25px;border-radius:22px;margin-top:22px;
+}
+.balance small{color:#d0eee5}
+.amount{font-size:36px;font-weight:bold;margin:12px 0}
+.points{color:#d0eee5}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}
+.stat,.card{
+ background:#19273b;padding:18px;border-radius:17px;margin-top:12px
+}
+.stat small,.muted{color:#9eafc5}
+.stat h3{margin-bottom:0}
+h2{font-size:20px;margin-top:28px}
+.card{padding:20px}
+.card p{font-size:13px;color:#9eafc5;line-height:1.5}
+button{
+ border:0;border-radius:10px;padding:12px 17px;
+ background:#16bd89;color:#06251b;font-weight:bold;
+}
+button:disabled{opacity:.5}
+.green{color:#20d69b}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+nav{
+ position:fixed;bottom:0;left:0;width:100%;
+ display:flex;justify-content:space-around;
+ background:#132034;padding:13px 2px;
+ border-top:1px solid #25334a;
+}
+nav button{
+ background:none;color:#9eafc5;padding:5px;
+ font-size:12px;font-weight:normal;flex:1;
+}
+nav button.active{color:#20d69b}
+nav span{display:block;font-size:19px;margin-bottom:5px}
+.page{display:none}
+.page.active{display:block}
+input{
+ width:100%;padding:14px;border:1px solid #35445a;
+ border-radius:10px;background:#111d30;color:white;margin:12px 0;
+}
+.notice{
+ background:#253248;padding:13px;border-radius:12px;
+ color:#bdcce0;font-size:13px;line-height:1.5;
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo">Free <span>Earnings</span></div>
+ <div class="avatar">👤</div>
+</header>
+
+<main>
+
+<!-- HOME -->
+<section id="home" class="page active">
+ <div class="welcome">Welcome to Free Earnings!</div>
+
+ <div class="balance">
+  <small>Demo wallet balance</small>
+  <div class="amount">₹0.00</div>
+  <div class="points"><span id="points">0</span> demo points</div>
+ </div>
+
+ <div class="stats">
+  <div class="stat">
+   <small>Completed tasks</small>
+   <h3 id="completed">0</h3>
+  </div>
+  <div class="stat">
+   <small>Total referrals</small>
+   <h3>0</h3>
+  </div>
+ </div>
+
+ <h2>Daily rewards 🎁</h2>
+ <div class="card row">
+  <div>
+   <b>Daily check-in</b>
+   <p>Try your daily demo reward</p>
+  </div>
+  <button id="claimBtn" onclick="claimDaily()">Claim</button>
+ </div>
+
+ <h2>Earn more rewards</h2>
+ <div class="card row" onclick="showPage('tasks')" style="cursor:pointer">
+  <div><b>Complete tasks</b><p>Discover available tasks</p></div>
+  <span class="green">➜</span>
+ </div>
+ <div class="card row" onclick="showPage('refer')" style="cursor:pointer">
+  <div><b>Invite friends</b><p>Explore the referral programme</p></div>
+  <span class="green">➜</span>
+ </div>
+</section>
+
+<!-- TASKS -->
+<section id="tasks" class="page">
+ <h2>Available Tasks 📋</h2>
+ <p class="muted">Complete verified activities to earn rewards.</p>
+
+ <div class="card">
+  <b>Sponsored tasks</b>
+  <p>Sponsored activities will appear here once approved by the administrator.</p>
+  <span class="green">Coming soon</span>
+ </div>
+
+ <div class="card">
+  <b>Watch advertisements</b>
+  <p>Rewarded advertisements will be added through an eligible advertising partner.</p>
+  <span class="green">Coming soon</span>
+ </div>
+
+ <div class="notice">
+  No tasks are currently active. Never pay money to unlock an earning task.
+ </div>
+</section>
+
+<!-- REFERRALS -->
+<section id="refer" class="page">
+ <h2>Invite Friends 👥</h2>
+ <div class="card">
+  <h3>Grow together!</h3>
+  <p>Invite your friends to Free Earnings. Referral rewards will become active after the referral system is connected.</p>
+  <div class="notice">Your referral link will be generated after Telegram integration.</div>
+  <button style="width:100%;margin-top:15px" disabled>Referral link coming soon</button>
+ </div>
+ <h2>Referral statistics</h2>
+ <div class="stat">
+  <small>Total invited users</small>
+  <h3>0</h3>
+ </div>
+</section>
+
+<!-- WALLET -->
+<section id="wallet" class="page">
+ <h2>My Wallet 💰</h2>
+ <div class="balance">
+  <small>Demo available balance</small>
+  <div class="amount">₹0.00</div>
+  <div class="points">0 demo points</div>
+ </div>
+
+ <div class="card">
+  <b>UPI Withdrawal</b>
+  <p>UPI withdrawals will be available after secure payment and verification setup.</p>
+  <input placeholder="UPI ID (disabled for now)" disabled>
+  <button disabled style="width:100%">Withdraw - Coming soon</button>
+ </div>
+
+ <h2>Transaction history</h2>
+ <div class="card muted">No transactions yet.</div>
+ <div class="notice">All balances currently displayed are demo values, not real money.</div>
+</section>
+
+<!-- PROFILE -->
+<section id="profile" class="page">
+ <h2>My Profile 👤</h2>
+ <div class="card">
+  <div style="font-size:45px">👤</div>
+  <h3>Guest User</h3>
+  <p>Telegram account not connected yet.</p>
+ </div>
+
+ <h2>Account details</h2>
+ <div class="card">
+  <p>Username: Not connected</p>
+  <p>User ID: Not connected</p>
+  <p>Account status: Demo mode</p>
+ </div>
+ <div class="card">
+  <b>About Free Earnings</b>
+  <p>Earn through verified tasks, referrals and rewards.</p>
+ </div>
+</section>
+
+</main>
+
+<nav>
+ <button class="active" onclick="showPage('home',this)">
+  <span>⌂</span>Home
+ </button>
+ <button onclick="showPage('tasks',this)">
+  <span>▣</span>Tasks
+ </button>
+ <button onclick="showPage('refer',this)">
+  <span>♧</span>Refer
+ </button>
+ <button onclick="showPage('wallet',this)">
+  <span>◉</span>Wallet
+ </button>
+ <button onclick="showPage('profile',this)">
+  <span>♙</span>Profile
+ </button>
+</nav>
+
+<script>
+function showPage(page,button){
+ document.querySelectorAll('.page').forEach(p=>{
+  p.classList.remove('active');
+ });
+ document.getElementById(page).classList.add('active');
+
+ document.querySelectorAll('nav button').forEach(b=>{
+  b.classList.remove('active');
+ });
+
+ if(button){
+  button.classList.add('active');
+ }else{
+  const index=['home','tasks','refer','wallet','profile'].indexOf(page);
+  document.querySelectorAll('nav button')[index].classList.add('active');
+ }
+ window.scrollTo(0,0);
+}
+
+let points=0;
+let completed=0;
+let claimed=false;
+
+function claimDaily(){
+ if(claimed){
+  alert('You have already claimed today’s demo reward.');
+  return;
+ }
+ claimed=true;
+ points+=10;
+ document.getElementById('points').textContent=points;
+ document.getElementById('claimBtn').textContent='Claimed';
+ document.getElementById('claimBtn').disabled=true;
+ alert('10 demo points added! These are not redeemable money.');
+}
+
+document.getElementById('completed').textContent=completed;
+</script>
+
+
+<!-- Telegram Mini App SDK -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://xyxzexwguiaghxqokwbr.supabase.co";
+const SUPABASE_KEY = "sb_publishable_AEON5zV0HdDgnimRkrwl_g_WsLOomRQ";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+const telegramApp = window.Telegram?.WebApp;
+
+if (telegramApp) {
+  telegramApp.ready();
+  telegramApp.expand();
+}
+
+async function loginWithTelegram() {
+  if (!telegramApp || !telegramApp.initData) {
+    console.error("Please open Free Earnings inside Telegram.");
+    return;
+  }
+
+  try {
+    console.log("Connecting to Telegram...");
+
+    const { data, error } = await supabaseClient.functions.invoke(
+      "telegram-auth",
+      {
+        body: {
+          initData: telegramApp.initData
+        }
+      }
+    );
+
+    if (error) {
+      console.error("Telegram login error:", error);
+      return;
+    }
+
+    if (!data || !data.success) {
+      console.error(
+        "Login failed:",
+        data?.error || "Unknown error"
+      );
+      return;
+    }
+
+    console.log("Telegram verification successful!");
+    console.log("User profile:", data.user);
+    console.log("Wallet:", data.wallet);
+
+  } catch (err) {
+    console.error("Connection error:", err);
+  }
+}
+
+loginWithTelegram();
+
+console.log("Free Earnings initialized!");
+</script>
+
+</body>
+</html>
