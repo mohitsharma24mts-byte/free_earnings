@@ -1,4 +1,3 @@
- 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -179,18 +178,18 @@ input{
 <!-- PROFILE -->
 <section id="profile" class="page">
  <h2>My Profile 👤</h2>
- <div class="card">
+<div class="card">
   <div style="font-size:45px">👤</div>
-  <h3>Guest User</h3>
-  <p>Telegram account not connected yet.</p>
- </div>
+  <h3 id="profileName">Guest User</h3>
+  <p id="profileMessage">Connecting Telegram account...</p>
+</div>
 
  <h2>Account details</h2>
- <div class="card">
-  <p>Username: Not connected</p>
-  <p>User ID: Not connected</p>
-  <p>Account status: Demo mode</p>
- </div>
+<div class="card">
+  <p>Username: <span id="profileUsername">Not connected</span></p>
+  <p>User ID: <span id="profileUserId">Not connected</span></p>
+  <p>Account status: <span id="accountStatus">Demo mode</span></p>
+</div> 
  <div class="card">
   <b>About Free Earnings</b>
   <p>Earn through verified tasks, referrals and rewards.</p>
@@ -315,7 +314,21 @@ async function loginWithTelegram() {
     console.log("Telegram verification successful!");
     console.log("User profile:", data.user);
     console.log("Wallet:", data.wallet);
+const telegramUser = data.user;
 
+document.getElementById("profileName").textContent =
+    telegramUser.first_name || telegramUser.username || "Telegram User";
+
+document.getElementById("profileMessage").textContent =
+    "Your Telegram account is connected.";
+
+document.getElementById("profileUsername").textContent =
+    telegramUser.username ? "@" + telegramUser.username : "Not set";
+
+document.getElementById("profileUserId").textContent =
+    telegramUser.telegram_id || "Not available";
+
+document.getElementById("accountStatus").textContent = "Connected";
   } catch (err) {
     console.error("Connection error:", err);
   }
