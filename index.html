@@ -158,9 +158,9 @@ input{
 <section id="wallet" class="page">
  <h2>My Wallet 💰</h2>
  <div class="balance">
-  <small>Demo available balance</small>
-  <div class="amount">₹0.00</div>
-  <div class="points">0 demo points</div>
+  <small> Available balance</small>
+   <div class="amount" id="walletBalance">₹0.00</div>
+  <div class="points" id="walletPoints">0 points</div>
  </div>
 
  <div class="card">
@@ -315,6 +315,15 @@ async function loginWithTelegram() {
     console.log("User profile:", data.user);
     console.log("Wallet:", data.wallet);
 const telegramUser = data.user;
+    const wallet = data.wallet;
+
+if (wallet) {
+  document.getElementById("walletBalance").textContent =
+    "₹" + (Number(wallet.balance_paise || 0) / 100).toFixed(2);
+
+  document.getElementById("walletPoints").textContent =
+    Number(wallet.points || 0) + " points";
+}
 
 document.getElementById("profileName").textContent =
     telegramUser.first_name || telegramUser.username || "Telegram User";
