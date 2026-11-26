@@ -60,6 +60,7 @@ input{width:100%;padding:14px;border:1px solid #35445a;border-radius:10px;backgr
     <h3>Grow together!</h3>
     <p>Invite friends using your personal link. You earn 50 points after your friend completes their first daily claim. Your friend receives 10 welcome points.</p>
     <div class="notice" id="referralStatus">Your personal referral link will appear after Telegram login.</div>
+    <div class="notice" id="referralDebug" style="font-size:13px;word-break:break-word">Checking Telegram referral parameter...</div>
     <input id="referralLink" readonly value="" placeholder="Loading your referral link..." />
     <button id="copyReferralBtn" style="width:100%;margin-top:5px" onclick="copyReferralLink()" disabled>Copy referral link</button>
   </div>
@@ -148,6 +149,12 @@ async function copyReferralLink() {
 
 async function processIncomingReferral() {
   const startParam = telegramApp?.initDataUnsafe?.start_param || "";
+  const debug = document.getElementById("referralDebug");
+  if (debug) {
+    debug.textContent = startParam
+      ? "Telegram start_param received: " + startParam
+      : "No Telegram start_param received. Open using the full referral link.";
+  }
   if (!/^ref_[1-9][0-9]{0,19}$/.test(startParam)) return;
   try {
     const {data, error} = await supabaseClient.functions.invoke(
@@ -155,6 +162,7 @@ async function processIncomingReferral() {
       {body: {initData: telegramInitData}}
     );
     if (error) throw error;
+    if (debug) debug.textContent = "Referral backend response: " + JSON.stringify(data);
     if (data?.success && data?.welcome_points) {
       const currentPoints = Number(currentWallet?.points || 0);
       renderWallet({points: currentPoints + Number(data.welcome_points)});
@@ -168,6 +176,7 @@ async function processIncomingReferral() {
     }
   } catch (err) {
     console.error("Referral registration error:", err);
+    if (debug) debug.textContent = "Referral request failed: " + (err?.message || String(err));
     document.getElementById("referralStatus").textContent =
       "Could not register this referral. Please contact support if you followed a referral link.";
   }
