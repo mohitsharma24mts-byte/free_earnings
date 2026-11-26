@@ -148,12 +148,18 @@ async function copyReferralLink() {
 }
 
 async function processIncomingReferral() {
-  const startParam = telegramApp?.initDataUnsafe?.start_param || "";
   const debug = document.getElementById("referralDebug");
+  const unsafeParam = telegramApp?.initDataUnsafe?.start_param || "";
+  const urlParam = new URLSearchParams(window.location.search).get("tgWebAppStartParam") || "";
+  const rawInitParams = new URLSearchParams(telegramInitData || "");
+  const signedParam = rawInitParams.get("start_param") || "";
+  const startParam = signedParam || unsafeParam || urlParam;
+
   if (debug) {
-    debug.textContent = startParam
-      ? "Telegram start_param received: " + startParam
-      : "No Telegram start_param received. Open using the full referral link.";
+    debug.textContent =
+      "Launch parameter check — initData: " + (signedParam || "missing") +
+      " | initDataUnsafe: " + (unsafeParam || "missing") +
+      " | URL: " + (urlParam || "missing");
   }
   if (!/^ref_[1-9][0-9]{0,19}$/.test(startParam)) return;
   try {
