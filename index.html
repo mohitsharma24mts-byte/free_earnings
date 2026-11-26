@@ -55,8 +55,16 @@ input{width:100%;padding:14px;border:1px solid #35445a;border-radius:10px;backgr
  <div class="notice">No tasks are currently active. Never pay money to unlock an earning task.</div>
 </section>
 <section id="refer" class="page">
- <h2>Invite Friends 👥</h2><div class="card"><h3>Grow together!</h3><p>Invite your friends to Free Earnings. Referral rewards will become active after the referral system is connected.</p><div class="notice">Your referral link will be generated after the referral system is connected.</div><button style="width:100%;margin-top:15px" disabled>Referral link coming soon</button></div>
- <h2>Referral statistics</h2><div class="stat"><small>Total invited users</small><h3>0</h3></div>
+  <h2>Invite Friends 👥</h2>
+  <div class="card">
+    <h3>Grow together!</h3>
+    <p>Invite friends using your personal link. You earn 50 points after your friend completes their first daily claim. Your friend receives 10 welcome points.</p>
+    <div class="notice" id="referralStatus">Your personal referral link will appear after Telegram login.</div>
+    <input id="referralLink" readonly value="" placeholder="Loading your referral link..." />
+    <button id="copyReferralBtn" style="width:100%;margin-top:5px" onclick="copyReferralLink()" disabled>Copy referral link</button>
+  </div>
+  <h2>Referral statistics</h2>
+  <div class="stat"><small>Total invited users</small><h3 id="referralCount">—</h3></div>
 </section>
 <section id="wallet" class="page">
  <h2>My Wallet 💰</h2><div class="balance"><small>Available balance</small><div class="amount" id="walletBalance">₹0.00</div><div class="points" id="walletPoints">0 points</div></div>
@@ -100,6 +108,7 @@ let telegramInitData = "";
 let currentWallet = null;
 let isLoggedIn = false;
 let claimInProgress = false;
+let currentTelegramUser = null;
 
 function renderWallet(wallet) {
  if (!wallet) return;
@@ -111,6 +120,57 @@ function renderWallet(wallet) {
  document.getElementById("walletBalance").textContent = "₹" + balance;
  document.getElementById("walletPoints").textContent = points + " points";
  document.getElementById("walletNotice").textContent = "Wallet data loaded from your verified account.";
+}
+
+function setupReferralLink(user) {
+  if (!user || !user.telegram_id) return;
+  const link = "https://t.me/FreeeeEarning_bot?startapp=ref_" + encodeURIComponent(user.telegram_id);
+  const input = document.getElementById("referralLink");
+  const button = document.getElementById("copyReferralBtn");
+  if (input) input.value = link;
+  if (button) button.disabled = false;
+  const status = document.getElementById("referralStatus");
+  if (status) status.textContent = "Share this link. Your friend gets 10 welcome points; you get 50 points after their first daily claim.";
+}
+
+async function copyReferralLink() {
+  const input = document.getElementById("referralLink");
+  if (!input || !input.value) return;
+  try {
+    await navigator.clipboard.writeText(input.value);
+    document.getElementById("referralStatus").textContent = "Referral link copied!";
+  } catch (err) {
+    input.focus();
+    input.select();
+    document.getElementById("referralStatus").textContent = "Select and copy the referral link above.";
+  }
+}
+
+async function processIncomingReferral() {
+  const startParam = telegramApp?.initDataUnsafe?.start_param || "";
+  if (!/^ref_[1-9][0-9]{0,19}$/.test(startParam)) return;
+  try {
+    const {data, error} = await supabaseClient.functions.invoke(
+      "referral-register",
+      {body: {initData: telegramInitData}}
+    );
+    if (error) throw error;
+    if (data?.success && data?.welcome_points) {
+      const currentPoints = Number(currentWallet?.points || 0);
+      renderWallet({points: currentPoints + Number(data.welcome_points)});
+      document.getElementById("referralStatus").textContent =
+        "Referral registered! You received " + data.welcome_points + " welcome points.";
+    } else if (data?.already_registered) {
+      document.getElementById("referralStatus").textContent =
+        "A referral is already registered for this account.";
+    } else if (data?.error) {
+      document.getElementById("referralStatus").textContent = data.error;
+    }
+  } catch (err) {
+    console.error("Referral registration error:", err);
+    document.getElementById("referralStatus").textContent =
+      "Could not register this referral. Please contact support if you followed a referral link.";
+  }
 }
 
 async function loginWithTelegram() {
