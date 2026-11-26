@@ -189,7 +189,9 @@ async function loginWithTelegram() {
   if (error) throw error;
   if (!data || !data.success || !data.user) throw new Error(data?.error || "Telegram login was not successful.");
   const user = data.user;
+  currentTelegramUser = user;
   renderWallet(data.wallet);
+  setupReferralLink(user);
   document.getElementById("profileName").textContent = user.first_name || user.username || "Telegram User";
   document.getElementById("profileMessage").textContent = "Your Telegram account is connected.";
   document.getElementById("profileUsername").textContent = user.username ? "@" + user.username : "Not set";
@@ -198,6 +200,7 @@ async function loginWithTelegram() {
   document.getElementById("claimMessage").textContent = "Your daily reward is ready to check.";
   document.getElementById("claimBtn").disabled = false;
   isLoggedIn = true;
+  await processIncomingReferral();
  } catch (err) {
   console.error("Telegram login error:", err);
   document.getElementById("profileMessage").textContent = "Login failed: " + (err.message || "Please try again.");
